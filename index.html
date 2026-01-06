@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fragments of Sight | Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&family=Noto+Serif+KR:wght@200;300;400&display=swap" rel="stylesheet">
+
+    <style>
+
+@media (max-width: 768px) {
+    #intro img {
+        max-width: 100%; /* 모바일에서는 이미지를 더 크게 보이게 */
+        margin-bottom: 30px; /* 모바일 제목과의 간격 */
+    }
+    /* ... 기타 모바일 스타일 ... */
+}
+
+        /* 1. 기본 스타일 및 보안 */
+        body { 
+            margin: 0; font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            color: #d1d1d1; background-color: #0d0d0d; 
+            line-height: 1.8; word-break: keep-all; scroll-behavior: smooth;
+            -webkit-user-select: none; user-select: none; /* 드래그 방지 */
+        }
+
+        h1, h2 { font-family: 'Noto Serif KR', serif; font-weight: 300; letter-spacing: 5px; color: #ffffff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        section { padding: 150px 20px; text-align: center; }
+
+        /* 2. 네비게이션 */
+        nav { position: fixed; top: 0; width: 100%; background: rgba(13, 13, 13, 0.95); backdrop-filter: blur(20px); z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        nav ul { display: flex; justify-content: center; list-style: none; padding: 22px 0; margin: 0; }
+        nav ul li { margin: 0 20px; }
+        nav ul li a { text-decoration: none; color: #ffffff; font-size: 0.85rem; letter-spacing: 2.5px; text-transform: uppercase; transition: 0.3s; opacity: 0.85; }
+        nav ul li a:hover { opacity: 1; text-shadow: 0 0 10px rgba(255, 255, 255, 0.5); }
+
+        /* 3. Intro & About */
+        #intro { height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; }
+        #intro h1 { font-size: 3.2rem; margin-bottom: 15px; letter-spacing: 8px; }
+        #intro p { font-size: 0.9rem; color: #666; letter-spacing: 5px; }
+        .about-content { max-width: 600px; margin: 0 auto; }
+        .about-content p { font-size: 1.1rem; font-weight: 300; color: #aaa; }
+
+        /* 4. Gallery & 하단 중앙 워터마크 */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 40px; max-width: 1200px; margin: 0 auto; }
+        .grid-item { 
+            position: relative; background: #1a1a1a; aspect-ratio: 4/5; cursor: pointer;
+            background-size: cover; background-position: center; transition: 0.5s ease; filter: brightness(0.7);
+        }
+        .grid-item:hover { filter: brightness(1); transform: translateY(-8px); }
+        
+        /* 썸네일 워터마크 */
+        .grid-item::after {
+            content: 'Fragments of Sight'; position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);
+            font-size: 0.65rem; color: rgba(255, 255, 255, 0.3); letter-spacing: 2px; text-transform: uppercase; pointer-events: none;
+        }
+
+        /* 5. 팝업 모달 & 슬라이드 버튼 */
+        .modal {
+            display: none; position: fixed; z-index: 2000; top: 0; left: 0;
+            width: 100%; height: 100%; background: rgba(0,0,0,0.98); 
+            align-items: center; justify-content: center;
+        }
+        .modal-wrapper { position: relative; max-width: 90%; max-height: 85vh; display: flex; justify-content: center; }
+        .modal-content { max-width: 100%; max-height: 85vh; border-radius: 2px; }
+        
+        /* 팝업 워터마크 */
+        .modal-wrapper::after {
+            content: 'Fragments of Sight'; position: absolute; bottom: 30px; left: 50%; transform: translateX(-50%);
+            font-size: 0.8rem; color: rgba(255, 255, 255, 0.2); letter-spacing: 5px; text-transform: uppercase; pointer-events: none;
+        }
+
+        .close { position: absolute; top: 30px; right: 40px; color: #fff; font-size: 35px; cursor: pointer; z-index: 2200; opacity: 0.5; transition: 0.3s; }
+        .close:hover { opacity: 1; }
+
+        /* [핵심] 슬라이드 버튼 디자인 수정 */
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1); /* 반투명 배경 */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white; font-size: 24px; width: 60px; height: 60px;
+            border-radius: 50%; cursor: pointer; z-index: 2200;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.3s;
+        }
+        .nav-btn:hover { background: rgba(255, 255, 255, 0.3); transform: translateY(-50%) scale(1.1); }
+        .prev-btn { left: 40px; } /* 위치를 안쪽으로 조정 */
+        .next-btn { right: 40px; }
+
+        footer { padding: 100px 20px; text-align: center; font-size: 0.75rem; color: #444; letter-spacing: 3px; }
+
+        @media (max-width: 768px) {
+            #intro h1 { font-size: 2rem; }
+            .grid { grid-template-columns: 1fr; }
+            .nav-btn { width: 45px; height: 45px; font-size: 18px; background: rgba(0, 0, 0, 0.5); }
+            .prev-btn { left: 15px; }
+            .next-btn { right: 15px; }
+            .close { top: 20px; right: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <ul>
+            <li><a href="#intro">Intro</a></li>
+            <li><a href="#about">About</a></li>
+            <li><a href="#gallery">Gallery</a></li>
+        </ul>
+    </nav>
+
+<section id="intro">
+        <img src="https://postfiles.pstatic.net/MjAyMTA0MjFfMjIx/MDAxNjE5MDA3ODM3MDQx.Tk1906ahKbqdCB5QovSUxASDAWxq8FYonlVTSEHIILAg.PEZtM0Wsdt00B3ntcm-h33Bnxc0-6iNPLRK-PapOr1Ag.JPEG.z_brad/P22249510430_000000000_FFD2707B-3F31-47EB-9ED9-35FF1FAB5E25.JPG?type=w773" 
+             alt="Fragments of Sight 대표 이미지" 
+             style="max-width: 60%; /* 이미지 크기 조절 */
+                    height: auto; 
+                    margin-bottom: 50px; /* 제목과의 간격 */
+                    opacity: 0.8; /* 약간 어둡게 하여 글자가 돋보이게 */
+                    filter: grayscale(20%); /* 약간의 흑백 필터 */
+                    border-radius: 4px; /* 모서리 살짝 둥글게 */
+                    box-shadow: 0 15px 30px rgba(0,0,0,0.4);">
+        
+        <h1>Fragments of Sight</h1>
+        <p>시선의 작은 조각</p>
+    </section>
+
+    <section id="gallery">
+        <div class="grid">
+            <div class="grid-item" style="background-image: url('https://postfiles.pstatic.net/MjAyMTA0MjFfMjIx/MDAxNjE5MDA3ODM3MDQx.Tk1906ahKbqdCB5QovSUxASDAWxq8FYonlVTSEHIILAg.PEZtM0Wsdt00B3ntcm-h33Bnxc0-6iNPLRK-PapOr1Ag.JPEG.z_brad/P22249510430_000000000_FFD2707B-3F31-47EB-9ED9-35FF1FAB5E25.JPG?type=w773')"></div>
+            <div class="grid-item" style="background-image: url('https://postfiles.pstatic.net/MjAyMTA0MjFfMTAg/MDAxNjE5MDA3OTE1ODkx._ZarhYef19NlJ-BjuBdR8aog7UAUjPWVyI123pajo9Ig.GYpA4hdIVTmz7vzZpgJwpU9hIXdqcWF5WwieK8u-RTUg.JPEG.z_brad/KakaoTalk_Photo_2021-04-21-21-02-58.jpeg?type=w773')"></div>
+            <div class="grid-item" style="background-image: url('https://postfiles.pstatic.net/MjAyMTA0MjFfMjE3/MDAxNjE5MDA3OTE2MDc1.eJAxrxIY5Mlg7NCWsckYpgwHvBCjegr0bjiVy0_58Wog.pswgQWOIVcnMO6MSSKHle-ug316Zn1H0ttxdoocq2ccg.JPEG.z_brad/KakaoTalk_Photo_2021-04-21-21-03-06.jpeg?type=w773')"></div>
+            <div class="grid-item" style="background-image: url('https://postfiles.pstatic.net/MjAyMTA0MjFfMjQg/MDAxNjE5MDA3OTE2Mjg3.aB4JQhRyCkrrpy-UI1P2crDte0cJ2OXkEeFmY77eZ50g.GY4AItLn_-lJgarybcoM4FnDEAYA-bUVRzLBqCTo-6cg.JPEG.z_brad/P20201118_182428936_BD7B368C-A313-4109-BD62-99B049C3C650.jpg?type=w773')"></div>
+            <div class="grid-item" style="background-image: url('https://postfiles.pstatic.net/MjAyMTA0MjFfNTUg/MDAxNjE5MDA3OTE1ODk1.iFAADvbA8A5t-8E-fav2pH_MqThhI2RBe0Rv5kT1InQg.H3riTgRt-4rSR50rh-7UVjQ0ElKKIMLT0Ja8xUsevhcg.JPEG.z_brad/P20190101_111403525_E9338890-E243-4E1C-ABBA-78400998BE91.JPG?type=w773')"></div>
+            <div class="grid-item" style="background-image: url('https://postfiles.pstatic.net/MjAyMTA0MjFfMTYw/MDAxNjE5MDA4NzUyOTcy.-SvE38eyEt6MbIDrJqlJdJBL8fEwSKbF6U4eiKBFYG8g.Mp8i7jhPRXbBLxGIrPzbgXnzuS5Bh9RM_dlEMgAgt0Ug.JPEG.z_brad/P39365860912_000000000_B0F59B8B-5C0D-428F-8AD4-4879B4625526.JPG?type=w773')"></div>
+        </div>
+    </section>
+
+    <footer>&copy; 2026 Fragments of Sight. All rights reserved.</footer>
+
+    <div id="imageModal" class="modal">
+        <span class="close">&times;</span>
+        <button class="nav-btn prev-btn" aria-label="Previous">&lt;</button>
+        
+        <div class="modal-wrapper">
+            <img class="modal-content" id="fullImage">
+        </div>
+
+        <button class="nav-btn next-btn" aria-label="Next">&gt;</button>
+    </div>
+
+    <script>
+        const modal = document.getElementById("imageModal");
+        const fullImg = document.getElementById("fullImage");
+        const closeBtn = document.querySelector(".close");
+        const prevBtn = document.querySelector(".prev-btn");
+        const nextBtn = document.querySelector(".next-btn");
+        
+        let currentIndex = 0;
+        const items = document.querySelectorAll('.grid-item');
+        
+        // 갤러리의 모든 이미지 URL 배열 생성
+        const images = Array.from(items).map(item => {
+            const bg = item.style.backgroundImage;
+            return bg.slice(5, -2).replace(/"/g, "");
+        });
+
+        // 클릭 시 모달 열기
+        items.forEach((item, index) => {
+            item.addEventListener('click', () => {
+                currentIndex = index;
+                updateModalImage();
+                modal.style.display = "flex";
+            });
+        });
+
+        // 이미지 전환 로직
+        function updateModalImage() {
+            fullImg.src = images[currentIndex];
+        }
+
+        prevBtn.onclick = (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            updateModalImage();
+        };
+
+        nextBtn.onclick = (e) => {
+            e.stopPropagation();
+            currentIndex = (currentIndex + 1) % images.length;
+            updateModalImage();
+        };
+
+        // 닫기 기능
+        closeBtn.onclick = () => modal.style.display = "none";
+        modal.onclick = (e) => { if (e.target === modal) modal.style.display = "none"; }
+
+        // 키보드 컨트롤 (좌우 화살표, ESC)
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === "flex") {
+                if (e.key === "ArrowLeft") prevBtn.click();
+                if (e.key === "ArrowRight") nextBtn.click();
+                if (e.key === "Escape") modal.style.display = "none";
+            }
+        });
+
+        // [보안] 우클릭 및 드래그 차단
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('dragstart', e => e.preventDefault());
+    </script>
+
+</body>
+</html>
