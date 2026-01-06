@@ -51,12 +51,11 @@
         #page-intro img { max-width: 60%; height: auto; margin-bottom: 40px; border-radius: 4px; opacity: 0.8; }
         .about-inner { max-width: 650px; text-align: center; padding-top: 50px; }
 
-        /* [그리드 스타일 - 메이슨리 레이아웃] */
+        /* [그리드 스타일 - 메이슨리] */
         .grid { 
             width: 100%; 
             max-width: 1200px; 
             margin-top: 40px;
-            /* 핵심: 가로 3열 설정 */
             column-count: 3; 
             column-gap: 30px;
         }
@@ -82,19 +81,21 @@
             pointer-events: none; 
         }
 
-        /* 워터마크 */
+        /* ⭐️ 리스트 워터마크 (반응형 폰트) */
         .grid-item::after {
             content: 'Fragments of Sight';
             position: absolute;
             bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.7rem;
+            /* PC에서는 0.7rem, 모바일에서는 화면 너비에 맞춰 작아짐 */
+            font-size: clamp(8px, 1.5vw, 12px); 
             color: rgba(255, 255, 255, 0.4);
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             pointer-events: none;
             z-index: 5;
+            white-space: nowrap;
         }
 
         /* [모달] */
@@ -102,18 +103,22 @@
         .modal-wrapper { position: relative; display: flex; align-items: center; justify-content: center; width: 90%; height: 85vh; }
         
         .modal-image-container { position: relative; display: inline-block; max-width: 100%; max-height: 100%; }
+        
+        /* ⭐️ 팝업 모달 워터마크 (반응형 폰트) */
         .modal-image-container::after {
             content: 'Fragments of Sight';
             position: absolute;
-            bottom: 30px;
+            bottom: 5%; /* 하단에서 5% 지점 */
             left: 50%;
             transform: translateX(-50%);
-            font-size: 0.9rem;
+            /* 최소 10px에서 최대 16px 사이로 유연하게 조절 */
+            font-size: clamp(10px, 2.5vw, 16px);
             color: rgba(255, 255, 255, 0.3);
-            letter-spacing: 5px;
+            letter-spacing: 4px;
             text-transform: uppercase;
             pointer-events: none;
             z-index: 2100;
+            white-space: nowrap;
         }
         
         .modal-content { max-width: 100%; max-height: 85vh; object-fit: contain; display: block; }
@@ -145,6 +150,10 @@
             .grid { column-count: 1; } 
             #page-intro img { max-width: 90%; }
             .close { right: 10px; top: -45px; }
+            .nav-btn { font-size: 35px; padding: 10px; opacity: 0.5; }
+            
+            /* 모바일에서 워터마크 위치 살짝 위로 조정 (선택 사항) */
+            .grid-item::after { bottom: 10px; }
         }
     </style>
 </head>
@@ -181,26 +190,15 @@
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/4.jpg?raw=true"></div>
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/5.jpg?raw=true"></div>
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/6.jpg?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/7.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/8.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/9.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/10.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/11.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/13.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/14.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/15.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/16.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/17.JPG?raw=true"></div>
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/18.jpg?raw=true"></div>
         </div>
     </section>
 
     <section id="page-design" class="page-content">
         <h2>Design</h2>
         <div class="grid design-grid">
-            <div class="grid-item"><img src=""></div>
-            <div class="grid-item"><img src=""></div>
-            <div class="grid-item"><img src=""></div>
+            <div class="grid-item"><img src="https://picsum.photos/1200/800?random=10"></div>
+            <div class="grid-item"><img src="https://picsum.photos/800/1200?random=20"></div>
+            <div class="grid-item"><img src="https://picsum.photos/1000/1000?random=30"></div>
         </div>
     </section>
 
@@ -272,6 +270,3 @@
     </script>
 </body>
 </html>
-
-
-
