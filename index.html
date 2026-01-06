@@ -2,26 +2,19 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fragments of Sight | Portfolio</title>
     
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&family=Noto+Serif+KR:wght@200;300;400&display=swap" rel="stylesheet">
 
     <style>
-        /* [기본 보안 설정] */
-        * { 
-            -webkit-user-select: none; 
-            -ms-user-select: none; 
-            user-select: none; 
-            -webkit-touch-callout: none !important; /* iOS 길게 누르기 메뉴 차단 */
-            box-sizing: border-box; 
-        }
+        /* [기본 설정] */
+        * { -webkit-user-select: none; -ms-user-select: none; user-select: none; -webkit-touch-callout: none; box-sizing: border-box; }
 
         body { 
             margin: 0; font-family: 'Inter', 'Noto Sans KR', sans-serif; 
             color: #d1d1d1; background-color: #0d0d0d; 
             line-height: 1.8; overflow-x: hidden;
-            -webkit-tap-highlight-color: transparent; /* 모바일 클릭 시 잔상 제거 */
         }
 
         h1, h2 { font-family: 'Noto Serif KR', serif; font-weight: 300; letter-spacing: 5px; color: #ffffff; }
@@ -81,30 +74,22 @@
         }
         .grid-item:hover { filter: brightness(1); transform: translateY(-5px); }
 
-        /* ⭐️ 복사 방지 투명 레이어 (리스트 이미지용) */
-        .grid-item::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 10;
-            background: rgba(0,0,0,0);
-        }
-
         .grid-item img { 
             width: 100%; 
             height: auto; 
             display: block; 
-            pointer-events: none; /* 이미지를 직접 만지지 못하게 함 */
+            pointer-events: none; 
         }
 
-        /* 리스트 워터마크 */
+        /* ⭐️ 리스트 워터마크 (반응형 폰트) */
         .grid-item::after {
             content: 'Fragments of Sight';
             position: absolute;
             bottom: 15px;
             left: 50%;
             transform: translateX(-50%);
-            font-size: clamp(8px, 1.2vw, 11px); 
+            /* PC에서는 0.7rem, 모바일에서는 화면 너비에 맞춰 작아짐 */
+            font-size: clamp(8px, 1.5vw, 12px); 
             color: rgba(255, 255, 255, 0.4);
             letter-spacing: 2px;
             text-transform: uppercase;
@@ -113,7 +98,286 @@
             white-space: nowrap;
         }
 
-        /* [모달 팝업] */
+        /* [모달] */
+        .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; }
+        .modal-wrapper { position: relative; display: flex; align-items: center; justify-content: center; width: 90%; height: 85vh; }
+        
+        .modal-image-container { position: relative; display: inline-block; max-width: 100%; max-height: 100%; }
+        
+        /* ⭐️ 팝업 모달 워터마크 (반응형 폰트) */
+        .modal-image-container::after {
+            content: 'Fragments of Sight';
+            position: absolute;
+            bottom: 5%; /* 하단에서 5% 지점 */
+            left: 50%;
+            transform: translateX(-50%);
+            /* 최소 10px에서 최대 16px 사이로 유연하게 조절 */
+            font-size: clamp(10px, 2.5vw, 16px);
+            color: rgba(255, 255, 255, 0.3);
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            pointer-events: none;
+            z-index: 2100;
+            white-space: nowrap;
+        }
+        
+        .modal-content { max-width: 100%; max-height: 85vh; object-fit: contain; display: block; }
+        
+        .close { position: absolute; top: -50px; right: 0; color: #fff; font-size: 35px; cursor: pointer; opacity: 0.5; transition: 0.3s; }
+        .close:hover { opacity: 1; }
+
+        .nav-btn {
+            position: absolute; top: 50%; transform: translateY(-50%);
+            background: none; border: none; 
+            color: white; font-size: 50px; font-weight: 100; 
+            cursor: pointer; z-index: 2200; display: flex; align-items: center; justify-content: center;
+            opacity: 0.3; transition: 0.3s; padding: 20px;
+        }
+        .nav-btn:hover { opacity: 1; transform: translateY(-50%) scale(1.1); }
+        .prev-btn { left: -100px; }
+        .next-btn { right: -100px; }
+
+        footer { text-align: center; padding: 50px 0; font-size: 0.75rem; color: #444; letter-spacing: 2px; }
+
+        /* 반응형 설정 */
+        @media (max-width: 1100px) {
+            .grid { column-count: 2; } 
+            .prev-btn { left: 0px; }
+            .next-btn { right: 0px; }
+        }
+
+        @media (max-width: 768px) {
+            .grid { column-count: 1; } 
+            #page-intro img { max-width: 90%; }
+            .close { right: 10px; top: -45px; }
+            .nav-btn { font-size: 35px; padding: 10px; opacity: 0.5; }
+            
+            /* 모바일에서 워터마크 위치 살짝 위로 조정 (선택 사항) */
+            .grid-item::after { bottom: 10px; }
+        }
+    </style>
+</head>
+<body oncontextmenu="return false">
+
+    <nav>
+        <ul>
+            <li><a onclick="navigateTo('intro')" id="link-intro" class="active">Intro</a></li>
+            <li><a onclick="navigateTo('about')" id="link-about">About</a></li>
+            <li><a onclick="navigateTo('photo')" id="link-photo">Photo</a></li>
+            <li><a onclick="navigateTo('design')" id="link-design">Design</a></li>
+        </ul>
+    </nav>
+
+    <section id="page-intro" class="page-content active">
+        <img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/main.jpg?raw=true">
+        <h1>Fragments of Sight</h1>
+        <p>시선의 작은 조각들</p>
+    </section>
+
+    <section id="page-about" class="page-content">
+        <div class="about-inner">
+            <h2>About</h2>
+            <p>자세히 보지 않으면 보이지 않는 것들,<br>평범한 일상 속 숨겨진 조각들을 기록합니다.</p>
+        </div>
+    </section>
+
+    <section id="page-photo" class="page-content">
+        <h2>Photo</h2>
+        <div class="grid photo-grid">
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/1.jpg?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/2.jpg?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/3.jpg?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/4.jpg?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/5.jpg?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/6.jpg?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/7.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/8.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/9.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/10.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/11.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/13.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/14.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/15.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/16.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/17.JPG?raw=true"></div>
+            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/18.jpg?raw=true"></div>
+        </div>
+    </section>
+
+    <section id="page-design" class="page-content">
+        <h2>Design</h2>
+        <div class="grid design-grid">
+            <div class="grid-item"><img src=""></div>
+            <div class="grid-item"><img src=""></div>
+            <div class="grid-item"><img src=""></div>
+        </div>
+    </section>
+
+    <footer>&copy; 2026 Fragments of Sight.</footer>
+
+    <div id="imageModal" class="modal">
+        <div class="modal-wrapper">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <button class="nav-btn prev-btn" onclick="changeImage(-1)">&#10094;</button>
+            <div class="modal-image-container">
+                <img class="modal-content" id="fullImage">
+            </div>
+            <button class="nav-btn next-btn" onclick="changeImage(1)">&#10095;</button>
+        </div>
+    </div>
+
+    <script>
+        let currentImages = [];
+        let currentIndex = 0;
+
+        function navigateTo(pageId) {
+            const pages = document.querySelectorAll('.page-content');
+            pages.forEach(page => page.classList.remove('active'));
+            const links = document.querySelectorAll('nav ul li a');
+            links.forEach(link => link.classList.remove('active'));
+            document.getElementById('page-' + pageId).classList.add('active');
+            document.getElementById('link-' + pageId).classList.add('active');
+            window.scrollTo(0, 0);
+        }
+
+        const modal = document.getElementById("imageModal");
+        const fullImg = document.getElementById("fullImage");
+
+        document.addEventListener('click', (e) => {
+            const item = e.target.closest('.grid-item');
+            if (item) {
+                const activeSection = document.querySelector('.page-content.active');
+                const sectionImgs = activeSection.querySelectorAll('.grid-item img');
+                currentImages = Array.from(sectionImgs).map(img => img.src);
+                const clickedSrc = item.querySelector('img').src;
+                currentIndex = currentImages.indexOf(clickedSrc);
+                fullImg.src = currentImages[currentIndex];
+                modal.style.display = "flex";
+                document.body.style.overflow = "hidden";
+            }
+        });
+
+        function changeImage(step) {
+            currentIndex = (currentIndex + step + currentImages.length) % currentImages.length;
+            fullImg.src = currentImages[currentIndex];
+        }
+
+        function closeModal() {
+            modal.style.display = "none";
+            document.body.style.overflow = "auto";
+        }
+
+        modal.onclick = (e) => { if (e.target === modal) closeModal(); }
+
+        document.addEventListener('keydown', (e) => {
+            if (modal.style.display === "flex") {
+                if (e.key === "ArrowLeft") changeImage(-1);
+                if (e.key === "ArrowRight") changeImage(1);
+                if (e.key === "Escape") closeModal();
+            }
+        });
+
+        document.addEventListener('contextmenu', e => e.preventDefault());
+    </script><!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Fragments of Sight | Portfolio</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@200;300;400&family=Noto+Serif+KR:wght@200;300;400&display=swap" rel="stylesheet">
+
+    <style>
+        /* [1. 전체 보안 설정] */
+        * { 
+            -webkit-user-select: none; 
+            -ms-user-select: none; 
+            user-select: none; 
+            -webkit-touch-callout: none !important; /* iOS 핵심 */
+            box-sizing: border-box; 
+        }
+
+        body { 
+            margin: 0; font-family: 'Inter', 'Noto Sans KR', sans-serif; 
+            color: #d1d1d1; background-color: #0d0d0d; 
+            line-height: 1.8; overflow-x: hidden;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        h1, h2 { font-family: 'Noto Serif KR', serif; font-weight: 300; letter-spacing: 5px; color: #ffffff; }
+
+        /* [네비게이션] */
+        nav { position: fixed; top: 0; width: 100%; background: rgba(13, 13, 13, 0.98); backdrop-filter: blur(20px); z-index: 1000; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        nav ul { display: flex; justify-content: center; list-style: none; padding: 22px 0; margin: 0; }
+        nav ul li { margin: 0 20px; }
+        nav ul li a { 
+            text-decoration: none; color: #ffffff; font-size: 0.85rem; letter-spacing: 2.5px; 
+            text-transform: uppercase; transition: 0.3s; opacity: 0.5; cursor: pointer;
+        }
+        nav ul li a.active { opacity: 1; border-bottom: 1px solid #fff; padding-bottom: 5px; }
+
+        /* [콘텐츠 섹션] */
+        .page-content { 
+            display: none; 
+            padding: 150px 20px 80px; 
+            min-height: 100vh;
+            animation: fadeIn 0.4s ease forwards;
+        }
+        .page-content.active { 
+            display: flex; 
+            flex-direction: column;
+            align-items: center;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* [Intro & About] */
+        #page-intro img { max-width: 60%; height: auto; margin-bottom: 40px; border-radius: 4px; opacity: 0.8; pointer-events: none; }
+        .about-inner { max-width: 650px; text-align: center; padding-top: 50px; }
+
+        /* [그리드 스타일 - 메이슨리] */
+        .grid { 
+            width: 100%; 
+            max-width: 1200px; 
+            margin-top: 40px;
+            column-count: 3; 
+            column-gap: 30px;
+        }
+
+        .grid-item { 
+            display: inline-block; 
+            width: 100%;
+            margin-bottom: 30px; 
+            position: relative; 
+            background: #1a1a1a; 
+            cursor: pointer;
+            transition: 0.4s; 
+            filter: brightness(0.7); 
+            overflow: hidden;
+            border-radius: 2px;
+        }
+        .grid-item:hover { filter: brightness(1); transform: translateY(-5px); }
+
+        /* 리스트 이미지 보호막 (투명 벽) */
+        .grid-item::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: 20; /* 이미지보다 높게 */
+            background: rgba(255, 255, 255, 0); 
+        }
+
+        .grid-item img { 
+            width: 100%; 
+            height: auto; 
+            display: block; 
+            pointer-events: none !important; 
+        }
+
+        /* [모달 팝업 보안 강화] */
         .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; }
         .modal-wrapper { position: relative; display: flex; align-items: center; justify-content: center; width: 90%; height: 85vh; }
         
@@ -121,16 +385,18 @@
             position: relative; 
             display: inline-block; 
             max-width: 100%; 
-            max-height: 100%; 
+            max-height: 100%;
+            overflow: hidden;
         }
 
-        /* ⭐️ 복사 방지 투명 레이어 (팝업 모달 이미지용) */
+        /* ⭐️ 핵심: 팝업 이미지 위 투명 보호막 (::before) */
         .modal-image-container::before {
             content: "";
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: 2200; /* 이미지보다 높은 z-index로 덮어버림 */
+            top: 0; left: 0; right: 0; bottom: 0;
+            z-index: 3000; /* 모든 것보다 위 */
             background: rgba(0,0,0,0);
+            cursor: default;
         }
         
         /* 팝업 워터마크 */
@@ -145,7 +411,7 @@
             letter-spacing: 4px;
             text-transform: uppercase;
             pointer-events: none;
-            z-index: 2100;
+            z-index: 3100;
             white-space: nowrap;
         }
         
@@ -154,17 +420,17 @@
             max-height: 85vh; 
             object-fit: contain; 
             display: block; 
-            pointer-events: none; /* 이미지 직접 터치 및 길게 누르기 차단 */
+            pointer-events: none !important; /* 이미지 직접 인식 차단 */
         }
         
-        .close { position: absolute; top: -50px; right: 0; color: #fff; font-size: 35px; cursor: pointer; opacity: 0.5; transition: 0.3s; z-index: 2300; }
+        .close { position: absolute; top: -50px; right: 0; color: #fff; font-size: 35px; cursor: pointer; opacity: 0.5; transition: 0.3s; z-index: 4000; }
         .close:hover { opacity: 1; }
 
         .nav-btn {
             position: absolute; top: 50%; transform: translateY(-50%);
             background: none; border: none; 
             color: white; font-size: 50px; font-weight: 100; 
-            cursor: pointer; z-index: 2300; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; z-index: 4000; display: flex; align-items: center; justify-content: center;
             opacity: 0.3; transition: 0.3s; padding: 20px;
         }
         .nav-btn:hover { opacity: 1; transform: translateY(-50%) scale(1.1); }
@@ -173,7 +439,6 @@
 
         footer { text-align: center; padding: 50px 0; font-size: 0.75rem; color: #444; letter-spacing: 2px; }
 
-        /* 반응형 설정 */
         @media (max-width: 1100px) {
             .grid { column-count: 2; } 
             .prev-btn { left: 0px; }
@@ -232,15 +497,15 @@
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/16.JPG?raw=true"></div>
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/17.JPG?raw=true"></div>
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/18.jpg?raw=true"></div>
-        </div>
+            </div>
     </section>
 
     <section id="page-design" class="page-content">
         <h2>Design</h2>
         <div class="grid design-grid">
-            <div class="grid-item"><img src="https://picsum.photos/1200/800?random=10"></div>
-            <div class="grid-item"><img src="https://picsum.photos/800/1200?random=20"></div>
-            <div class="grid-item"><img src="https://picsum.photos/1000/1000?random=30"></div>
+            <div class="grid-item"><img src=""></div>
+            <div class="grid-item"><img src=""></div>
+            <div class="grid-item"><img src=""></div>
         </div>
     </section>
 
@@ -250,7 +515,7 @@
         <div class="modal-wrapper">
             <span class="close" onclick="closeModal()">&times;</span>
             <button class="nav-btn prev-btn" onclick="changeImage(-1)">&#10094;</button>
-            <div class="modal-image-container">
+            <div class="modal-image-container" id="modalContainer">
                 <img class="modal-content" id="fullImage">
             </div>
             <button class="nav-btn next-btn" onclick="changeImage(1)">&#10095;</button>
@@ -258,10 +523,22 @@
     </div>
 
     <script>
-        // 전역 보안 설정 (우클릭 및 터치 메뉴 방지)
+        // [자바스크립트 보안 강화]
+        // 1. 우클릭 차단
         document.addEventListener('contextmenu', e => e.preventDefault());
+
+        // 2. 모바일 길게 누르기 차단 (인앱 브라우저 대응)
+        window.oncontextmenu = function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            return false;
+        };
+
+        // 3. 이미지 태그에 대한 터치 이벤트 무력화
         document.addEventListener('touchstart', function(e) {
-            if (e.touches.length > 1) e.preventDefault(); // 줌 방지 등 다중 터치 방지
+            if (e.target.tagName === 'IMG') {
+                e.preventDefault(); 
+            }
         }, {passive: false});
 
         let currentImages = [];
@@ -280,7 +557,6 @@
         const modal = document.getElementById("imageModal");
         const fullImg = document.getElementById("fullImage");
 
-        // 클릭 이벤트 (투명 보호막이 있어도 작동하도록 부모 요소 위임 방식 사용)
         document.addEventListener('click', (e) => {
             const item = e.target.closest('.grid-item');
             if (item) {
@@ -305,8 +581,10 @@
             document.body.style.overflow = "auto";
         }
 
-        // 모달 외부 클릭 시 닫기
-        modal.onclick = (e) => { if (e.target === modal) closeModal(); }
+        modal.onclick = (e) => { 
+            // 가림막이 있어도 모달 외부 클릭 시 닫히도록 설정
+            if (e.target === modal) closeModal(); 
+        }
 
         document.addEventListener('keydown', (e) => {
             if (modal.style.display === "flex") {
@@ -318,3 +596,8 @@
     </script>
 </body>
 </html>
+</body>
+</html>
+
+
+
