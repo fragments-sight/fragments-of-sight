@@ -70,9 +70,30 @@
 
         footer { padding: 100px 20px; text-align: center; font-size: 0.75rem; color: #444; letter-spacing: 3px; }
 
-        @media (max-width: 768px) {
-            .nav-btn { width: 45px; height: 45px; font-size: 18px; }
-            .prev-btn { left: 15px; } .next-btn { right: 15px; }
+@media (max-width: 768px) {
+    #intro {
+        padding-top: 100px; /* 네비게이션바와의 간격 확보 */
+        height: auto; /* 내용이 많아질 경우를 대비 */
+        min-height: 100vh;
+    }
+
+    #intro img {
+        max-width: 95% !important; /* 모바일에서는 화면에 거의 꽉 차게 조절 */
+        margin-bottom: 30px;
+    }
+
+    #intro h1 {
+        font-size: 2rem; /* 제목 크기도 모바일에 맞게 조정 */
+        letter-spacing: 5px;
+    }
+
+    /* 갤러리 및 버튼 최적화 */
+    .grid { grid-template-columns: 1fr; gap: 20px; }
+    .nav-btn { width: 45px; height: 45px; font-size: 18px; background: rgba(0, 0, 0, 0.5); }
+    .prev-btn { left: 10px; }
+    .next-btn { right: 10px; }
+    .close { top: 20px; right: 20px; }
+}
         }
     </style>
 </head>
@@ -190,5 +211,6 @@
 </body>
 
 </html>
+
 
 
