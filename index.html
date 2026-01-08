@@ -81,7 +81,7 @@
         }
         .grid-item:hover { filter: brightness(1); transform: translateY(-5px); }
 
-        /* 리스트 이미지 투명 보호막 */
+        /* 이미지 위 투명 보호막 */
         .grid-item::before {
             content: "";
             position: absolute;
@@ -97,6 +97,29 @@
             pointer-events: none !important; 
         }
 
+        /* 디자인 항목 제목 오버레이 (Hover 효과) */
+        .grid-item .item-title {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.7); 
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Noto Serif KR', serif;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            opacity: 0;
+            transition: 0.4s;
+            z-index: 30; 
+            padding: 20px;
+            text-align: center;
+        }
+
+        .grid-item:hover .item-title {
+            opacity: 1;
+        }
+
         /* [모달 팝업] */
         .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); align-items: center; justify-content: center; }
         .modal-wrapper { position: relative; display: flex; align-items: center; justify-content: center; width: 90%; height: 85vh; }
@@ -109,7 +132,6 @@
             overflow: hidden;
         }
 
-        /* 팝업 이미지 위 투명 보호막 */
         .modal-image-container::before {
             content: "";
             position: absolute;
@@ -118,7 +140,6 @@
             background: rgba(0,0,0,0);
         }
         
-        /* 팝업 워터마크 */
         .modal-image-container::after {
             content: 'Fragments of Sight';
             position: absolute;
@@ -158,17 +179,26 @@
 
         footer { text-align: center; padding: 50px 0; font-size: 0.75rem; color: #444; letter-spacing: 2px; }
 
+        /* [미디어 쿼리 - 태블릿/데스크탑 레이아웃] */
         @media (max-width: 1100px) {
             .grid { column-count: 2; } 
             .prev-btn { left: 0px; }
             .next-btn { right: 0px; }
         }
 
+        /* [미디어 쿼리 - 모바일 최적화] */
         @media (max-width: 768px) {
             .grid { column-count: 1; } 
             #page-intro img { max-width: 90%; }
             .close { right: 10px; top: -45px; }
             .nav-btn { font-size: 35px; padding: 10px; opacity: 0.5; }
+            
+            /* 모바일에서 디자인 제목 가독성 강화 */
+            .grid-item .item-title {
+                opacity: 0; /* 기본은 숨김 (터치 시 나타남) */
+                background: rgba(0, 0, 0, 0.6);
+                font-size: 0.85rem;
+            }
         }
     </style>
 </head>
@@ -218,17 +248,17 @@
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/17.JPG?raw=true"></div>
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/18.jpg?raw=true"></div>
             <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/photo/upload/19.jpg?raw=true"></div>
-            
         </div>
     </section>
 
     <section id="page-design" class="page-content">
         <h2>Design</h2>
         <div class="grid design-grid">
-            <div class="grid-item"><img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/poster/(2020601)marypoppins.jpg?raw=true"></div>
-            <div class="grid-item"><img src=""></div>
-            <div class="grid-item"><img src=""></div>
-        </div>
+            <div class="grid-item">
+                <img src="https://github.com/fragments-sight/fragments-of-sight/blob/main/poster/(2020601)marypoppins.jpg?raw=true">
+                <div class="item-title">Mary Poppins</div>
+            </div>
+            </div>
     </section>
 
     <footer>&copy; 2026 Fragments of Sight.</footer>
@@ -245,7 +275,7 @@
     </div>
 
     <script>
-        // 1. 보안 설정
+        // 1. 보안 설정 (우클릭, 드래그, 터치 길게 누르기 방지)
         document.addEventListener('contextmenu', e => e.preventDefault());
         window.oncontextmenu = function(e) { e.preventDefault(); e.stopPropagation(); return false; };
         document.addEventListener('touchstart', function(e) {
@@ -255,6 +285,7 @@
         let currentImages = [];
         let currentIndex = 0;
 
+        // 메뉴 이동 함수
         function navigateTo(pageId) {
             const pages = document.querySelectorAll('.page-content');
             pages.forEach(page => page.classList.remove('active'));
@@ -268,6 +299,7 @@
         const modal = document.getElementById("imageModal");
         const fullImg = document.getElementById("fullImage");
 
+        // 이미지 클릭 시 모달 열기
         document.addEventListener('click', (e) => {
             const item = e.target.closest('.grid-item');
             if (item) {
@@ -282,18 +314,22 @@
             }
         });
 
+        // 모달 이미지 전환 함수
         function changeImage(step) {
             currentIndex = (currentIndex + step + currentImages.length) % currentImages.length;
             fullImg.src = currentImages[currentIndex];
         }
 
+        // 모달 닫기 함수
         function closeModal() {
             modal.style.display = "none";
             document.body.style.overflow = "auto";
         }
 
+        // 모달 외부 클릭 시 닫기
         modal.onclick = (e) => { if (e.target === modal) closeModal(); }
 
+        // 키보드 제어 (좌우 화살표, ESC)
         document.addEventListener('keydown', (e) => {
             if (modal.style.display === "flex") {
                 if (e.key === "ArrowLeft") changeImage(-1);
@@ -304,8 +340,3 @@
     </script>
 </body>
 </html>
-
-
-
-
-
